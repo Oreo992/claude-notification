@@ -12,17 +12,6 @@
         ]
       }
     ],
-    "Notification": [
-      {
-        "matcher": "idle_prompt",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/notify.ps1\" -Title \"Claude Code\" -Message \"等待你的输入\" -Dir \"${CLAUDE_PROJECT_DIR}\""
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [
