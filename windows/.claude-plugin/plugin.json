@@ -1,31 +1,8 @@
 {
   "name": "windows",
-  "description": "Windows 桌面通知 - 权限请求、空闲等待、任务完成时发送通知",
+  "description": "Windows 桌面通知 - 任务完成时发送通知",
   "version": "1.0.0",
   "author": {
     "name": "Oreo992"
-  },
-  "hooks": {
-    "PermissionRequest": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/../notify.ps1\" -Title \"Claude Code\" -Message \"需要权限确认\" -Dir \"${CLAUDE_PROJECT_DIR}\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/../notify.ps1\" -Title \"Claude Code\" -Message \"任务已完成\" -Dir \"${CLAUDE_PROJECT_DIR}\""
-          }
-        ]
-      }
-    ]
   }
 }

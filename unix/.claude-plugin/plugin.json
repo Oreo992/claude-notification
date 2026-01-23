@@ -1,31 +1,8 @@
 {
   "name": "unix",
-  "description": "macOS/Linux 桌面通知 - 权限请求、空闲等待、任务完成时发送通知",
+  "description": "macOS/Linux 桌面通知 - 任务完成时发送通知",
   "version": "1.0.0",
   "author": {
     "name": "Oreo992"
-  },
-  "hooks": {
-    "PermissionRequest": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/../scripts/notify.sh\" \"Claude Code\" \"需要权限确认\" \"${CLAUDE_PROJECT_DIR}\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/../scripts/notify.sh\" \"Claude Code\" \"任务已完成\" \"${CLAUDE_PROJECT_DIR}\""
-          }
-        ]
-      }
-    ]
   }
 }
