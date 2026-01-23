@@ -1,21 +1,32 @@
 {
   "name": "claude-notification",
-  "description": "Claude Code 桌面通知插件 - 权限请求、空闲等待、任务完成时发送通知",
   "owner": {
     "name": "Oreo992"
+  },
+  "metadata": {
+    "description": "Claude Code 桌面通知插件 - 权限请求、空闲等待、任务完成时发送通知",
+    "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "windows",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/Oreo992/claude-notification.git",
+        "path": "windows"
+      },
       "description": "Windows 桌面通知（PowerShell）",
-      "version": "1.0.0",
-      "source": "windows"
+      "version": "1.0.0"
     },
     {
       "name": "unix",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/Oreo992/claude-notification.git",
+        "path": "unix"
+      },
       "description": "macOS/Linux 桌面通知（Shell）",
-      "version": "1.0.0",
-      "source": "unix"
+      "version": "1.0.0"
     }
   ]
 }
