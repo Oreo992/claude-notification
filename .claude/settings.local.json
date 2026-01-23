@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C:*)",
+      "Bash(git -C \"C:\\\\Users\\\\Administrator\\\\claude-notification\" status)"
+    ]
+  }
+}

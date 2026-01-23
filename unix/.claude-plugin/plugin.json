@@ -5,5 +5,27 @@
   "author": {
     "name": "Oreo992"
   },
-  "hooks": "hooks.json"
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/../scripts/notify.sh\" \"Claude Code\" \"需要权限确认\" \"${CLAUDE_PROJECT_DIR}\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/../scripts/notify.sh\" \"Claude Code\" \"任务已完成\" \"${CLAUDE_PROJECT_DIR}\""
+          }
+        ]
+      }
+    ]
+  }
 }
