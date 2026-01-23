@@ -17,6 +17,8 @@ plugin install windows@claude-notification    # Windows
 plugin install unix@claude-notification       # macOS/Linux
 ```
 
+> **注意**: 安装完成后需要重启 Claude Code 才能生效。
+
 ## 插件列表
 
 | 插件 | 平台 | 说明 |

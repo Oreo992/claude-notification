@@ -42,6 +42,5 @@ if ($foregroundPid -ne $myTerminalPid) {
     $notify.BalloonTipText = $Message
     $notify.Visible = $true
     $notify.ShowBalloonTip(3000)
-    Start-Sleep -Milliseconds 500
     $notify.Dispose()
 }
