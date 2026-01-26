@@ -1,13 +1,12 @@
 {
-  "description": "macOS/Linux 桌面通知 hooks",
+  "description": "macOS/Linux 桌面通知",
   "hooks": {
     "Stop": [
       {
-        "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/../scripts/notify.sh\" \"Claude Code\" \"任务已完成\" \"${CLAUDE_PROJECT_DIR}\"",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/scripts/notify.sh\" \"Claude Code\" \"任务已完成\" \"${CLAUDE_PROJECT_DIR}\"",
             "timeout": 10
           }
         ]

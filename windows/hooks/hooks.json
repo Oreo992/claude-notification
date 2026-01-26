@@ -1,13 +1,12 @@
 {
-  "description": "Windows 桌面通知 hooks",
+  "description": "Windows 桌面通知",
   "hooks": {
     "Stop": [
       {
-        "matcher": "*",
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/../notify.ps1\" -Title \"Claude Code\" -Message \"任务已完成\" -Dir \"${CLAUDE_PROJECT_DIR}\"",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${CLAUDE_PLUGIN_ROOT}/notify.ps1\" -Title \"Claude Code\" -Message \"任务已完成\" -Dir \"${CLAUDE_PROJECT_DIR}\"",
             "timeout": 10
           }
         ]
