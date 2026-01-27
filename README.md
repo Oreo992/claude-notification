@@ -3,18 +3,18 @@
 桌面通知插件市场，在以下场景发送系统通知（仅当终端在后台时触发）：
 
 - **权限请求** - 需要用户确认权限时
-- **空闲等待** - Claude 等待用户输入
 - **任务完成** - Claude 完成任务时
 
 ## 安装
 
 ```bash
-# 1. 添加市场
-plugin marketplace add Oreo992/claude-notification
+# 1. 打开Claude Code
+# 2. 添加市场，在Claude Code对话框中输入：
+/plugin marketplace add https://github.com/Oreo992/claude-notification
 
 # 2. 安装插件（根据你的系统选择）
-plugin install windows@claude-notification    # Windows
-plugin install unix@claude-notification       # macOS/Linux
+/plugin install windows@claude-notification    # Windows
+/plugin install unix@claude-notification       # macOS/Linux
 ```
 
 > **注意**: 安装完成后需要重启 Claude Code 才能生效。
