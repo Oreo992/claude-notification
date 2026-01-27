@@ -12,7 +12,7 @@
 # 2. 添加市场，在Claude Code对话框中输入：
 /plugin marketplace add https://github.com/Oreo992/claude-notification
 
-# 2. 安装插件（根据你的系统选择）
+# 3. 安装插件（根据你的系统选择）
 /plugin install windows@claude-notification    # Windows
 /plugin install unix@claude-notification       # macOS/Linux
 ```
