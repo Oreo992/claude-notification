@@ -1,7 +1,7 @@
 {
   "name": "unix",
   "description": "macOS/Linux 桌面通知 - 任务完成时发送通知",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "author": {
     "name": "Oreo992"
   }

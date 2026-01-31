@@ -12,7 +12,6 @@ if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT
 $configFile = Join-Path $Dir ".claude/claude-notification.local.md"
 $barkUrl = ""
 $barkOnly = $false
-$timeout = 3000
 $alwaysNotify = $false
 
 if (Test-Path $configFile) {
@@ -24,9 +23,6 @@ if (Test-Path $configFile) {
         }
         if ($frontmatter -match 'bark_only:\s*(true|false)') {
             $barkOnly = $Matches[1] -eq 'true'
-        }
-        if ($frontmatter -match 'timeout:\s*(\d+)') {
-            $timeout = [int]$Matches[1]
         }
         if ($frontmatter -match 'always_notify:\s*(true|false)') {
             $alwaysNotify = $Matches[1] -eq 'true'
@@ -127,7 +123,7 @@ if ($shouldNotify) {
                 $notify.BalloonTipTitle = $Title
                 $notify.BalloonTipText = $Message
                 $notify.Visible = $true
-                $notify.ShowBalloonTip($timeout)
+                $notify.ShowBalloonTip(5000)
                 # 不使用 Start-Sleep，让通知异步显示
                 $notify.Dispose()
             } catch {
