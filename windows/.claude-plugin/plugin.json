@@ -1,7 +1,7 @@
 {
   "name": "windows",
   "description": "Windows 桌面通知 - 任务完成时发送通知",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Oreo992"
   }
