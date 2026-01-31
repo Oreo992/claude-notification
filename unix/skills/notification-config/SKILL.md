@@ -107,37 +107,21 @@ Send notifications proactively in these scenarios:
 1. Ask user for Bark URL
 2. Use Write tool to create `.claude/claude-notification.local.md`
 3. **Ask user if they want to add notification capability to project's CLAUDE.md**
-   - If yes, add the following to `.claude/CLAUDE.md`:
-
-```markdown
-## Notification Feature
-
-Send notifications when completing important tasks.
-
-### Send Notification (macOS/Linux)
-```bash
-if [ -f ".claude/claude-notification.local.md" ]; then
-    BARK_URL=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' .claude/claude-notification.local.md | grep '^bark_url:' | sed 's/bark_url: *//' | sed 's/^"\(.*\)"$/\1/' | sed "s/^'\(.*\)'$/\1/")
-    if [ -n "$BARK_URL" ]; then
-        bash ~/.claude/plugins/cache/claude-notification/unix/*/skills/notification-config/scripts/bark.sh -u "$BARK_URL" -t "Claude Code" -m "Task completed: [describe task]"
-    fi
-fi
-```
-
-### When to Notify
-- User explicitly requests: "notify me when done"
-- Long-running tasks (>30s): builds, tests, deployments
-- Important milestones: PR created, review completed
-- Errors requiring attention: build failures, test failures
-```
-
+   - If yes, create or append to `.claude/CLAUDE.md` with notification instructions
+   - Include the bash command to read config and send notifications
+   - Explain when AI should send notifications (user requests, long tasks, milestones, errors)
 4. Remind user: **Restart Claude Code after configuration changes**
 
 ### Send Notification Proactively
 
-1. Read `bark_url` from config file (if configured)
-2. Use Bash tool to call `scripts/bark.sh`
-3. Choose appropriate parameters based on scenario
+When user requests notification or after completing important tasks:
+
+1. Read `bark_url` from `.claude/claude-notification.local.md`
+2. If bark_url exists, use Bash tool to call bark.sh:
+   ```
+   bash ~/.claude/plugins/cache/claude-notification/unix/*/skills/notification-config/scripts/bark.sh -u <bark_url> -t "Claude Code" -m "Task completed"
+   ```
+3. Choose appropriate parameters based on scenario (use -c for urgent notifications)
 
 ## Platform Notes
 
