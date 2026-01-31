@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Bark 推送通知脚本
 

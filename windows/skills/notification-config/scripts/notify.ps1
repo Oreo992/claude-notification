@@ -1,4 +1,4 @@
-param([string]$Title = "Claude Code", [string]$Message = "通知", [string]$Dir = "")
+﻿param([string]$Title = "Claude Code", [string]$Message = "通知", [string]$Dir = "")
 
 # 如果 Dir 为空或未展开，尝试从环境变量获取
 if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT_DIR') {
