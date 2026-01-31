@@ -25,26 +25,65 @@
 | `windows` | Windows 10/11 | PowerShell 实现，无需额外依赖 |
 | `unix` | macOS/Linux | macOS 使用 osascript，Linux 使用 notify-send |
 
-## 配置（可选）
 
-插件支持自定义配置。**直接告诉 AI 你想要什么配置即可**，例如：
+## 更新
+如果您已经安装过此插件，请使用以下命令更新插件版本
+```bash
+/plugin marketplace update claude-notification
+```
+<img width="745" height="181" alt="image" src="https://github.com/user-attachments/assets/4bbdb377-4e9b-4a04-9553-cd536f7c9a4c" />
 
+当提示更新完毕，重启Claude Code。
+
+## 初始化/配置
+
+此插件支持自定义配置和对应的Skills。
+首次使用建议运行
+```bash
+/notification-config
+```
+跟随Claude，完成通知插件的配置
+<img width="1341" height="413" alt="image" src="https://github.com/user-attachments/assets/396361a3-a550-4d9c-9c04-48070bcb976c" />
+
+
+
+后续你也可以使用此Skills，对通知配置进行更改，如：
 - "帮我配置 Bark 通知"
 - "我想让通知显示时间长一点"
 - "只用 Bark 推送，不要系统通知"
 
+示例:
+
+<img width="899" height="450" alt="image" src="https://github.com/user-attachments/assets/5040723f-e7ff-4417-9435-cad140e7991b" />
+
+
 AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询问是否要在项目的 `CLAUDE.md` 中添加通知功能，让 AI 能够在完成任务后主动发送通知。
 
-### 让 AI 主动发送通知
 
-配置完成后，AI 可以在以下场景主动发送通知：
+## 让 AI 主动发送通知
 
+这通常会在初始化时，Claude会主动询问您是否配置，如果未询问，您也可以通过
+```bash
+/notification-config 给你自己加上通知的功能,到全局的CLAUDE.md中
+```
+<img width="1144" height="912" alt="image" src="https://github.com/user-attachments/assets/a31bf2a8-177d-45ec-950c-8fe047e04f68" />
+
+支持的通知场景：
 - 用户明确要求："完成后通知我"、"用 bark 通知我"
 - 长时间任务完成：构建、测试、部署等
 - 重要里程碑：PR 创建、代码审查完成
 - 需要关注的错误：构建失败、测试不通过
 
-详细配置指南请查看 [NOTIFICATION_SETUP.md](./NOTIFICATION_SETUP.md)。
+
+示例：
+<img width="1581" height="276" alt="image" src="https://github.com/user-attachments/assets/18e73474-d577-45d3-8399-f447b56495b3" />
+
+收到的提示如下：
+
+<img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/4af4bc54-afa2-49a9-a54f-6c8a9bb44960" />
+
+
+详细配置指南也可以查看 [NOTIFICATION_SETUP.md](./NOTIFICATION_SETUP.md)。
 
 ### 手动配置
 
@@ -221,7 +260,7 @@ MIT
 
 ## 更新日志
 
-### v1.2.0 (2026-01-31)
+### v1.2.4 (2026-01-31)
 - ✨ Windows 升级到 Toast 通知 API，支持持久化到通知中心
 - ✨ 新增 `always_notify` 配置，支持前台通知
 - 🐛 修复 Unix 脚本缺少可执行权限的问题
