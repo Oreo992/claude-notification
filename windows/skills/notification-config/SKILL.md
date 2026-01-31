@@ -128,7 +128,8 @@ Send notifications proactively in these scenarios:
 5. **Ask about adding to CLAUDE.md** (only if not already configured):
    - Use AskUserQuestion: "是否要将通知功能添加到项目的 CLAUDE.md 中？这样 AI 就能在完成重要任务时主动发送通知。"
    - Options: "是，添加到 CLAUDE.md" / "否，暂时不需要"
-   - If yes: Create or append to `.claude/CLAUDE.md` with the following content:
+   - If yes: Create or append to `.claude/CLAUDE.md` with the following content.
+   - **IMPORTANT**: Replace `{{PLUGIN_PATH}}` with the actual expanded value of `${CLAUDE_PLUGIN_ROOT}` when writing to CLAUDE.md.
 
 ```markdown
 ## 通知功能配置
@@ -148,13 +149,13 @@ AI 应该在以下场景主动发送通知：
 
 \```powershell
 # 基础通知
-powershell -NoProfile -ExecutionPolicy Bypass -File "$USERPROFILE/.claude/plugins/cache/claude-notification/windows/1.2.2/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "Claude Code" -Message "任务完成"
+powershell -NoProfile -ExecutionPolicy Bypass -File "{{PLUGIN_PATH}}/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "Claude Code" -Message "任务完成"
 
 # 紧急通知（持续响铃30秒）
-powershell -NoProfile -ExecutionPolicy Bypass -File "$USERPROFILE/.claude/plugins/cache/claude-notification/windows/1.2.2/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "Claude Code" -Message "需要确认" -Call
+powershell -NoProfile -ExecutionPolicy Bypass -File "{{PLUGIN_PATH}}/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "Claude Code" -Message "需要确认" -Call
 
 # 分组通知
-powershell -NoProfile -ExecutionPolicy Bypass -File "$USERPROFILE/.claude/plugins/cache/claude-notification/windows/1.2.2/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "构建完成" -Message "项目构建成功" -Group "build"
+powershell -NoProfile -ExecutionPolicy Bypass -File "{{PLUGIN_PATH}}/skills/notification-config/scripts/bark.ps1" -Url "<user's bark url>" -Title "构建完成" -Message "项目构建成功" -Group "build"
 \```
 
 ### 使用原则
