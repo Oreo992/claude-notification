@@ -108,11 +108,44 @@ Send notifications proactively in these scenarios:
 
 1. Ask user for Bark URL
 2. Use Write tool to create `.claude/claude-notification.local.md`
-3. **ask user: "是否要将通知功能添加到项目的 CLAUDE.md 中？这样 AI 就能在完成重要任务时主动发送通知。"**
+3. **MUST ask user: "是否要将通知功能添加到项目的 CLAUDE.md 中？这样 AI 就能在完成重要任务时主动发送通知。"**
    - Use AskUserQuestion tool with options: "是，添加到 CLAUDE.md" / "否，暂时不需要"
-   - If yes: Create or append to `.claude/CLAUDE.md` with notification instructions
-   - Include example bash command to read config and send notifications
-   - Explain when AI should send notifications (user requests, long tasks, milestones, errors)
+   - If yes: Create or append to `.claude/CLAUDE.md` with the following content:
+
+```markdown
+## 通知功能配置
+
+### Bark 推送配置
+* Bark URL: `<user's bark url>`
+
+### 主动通知场景
+AI 应该在以下场景主动发送通知：
+1. **长时间任务完成** - 构建、测试、部署等耗时任务完成时
+2. **需要用户确认** - 重要决策或需要用户介入时（使用 `-c` 参数持续响铃）
+3. **重要里程碑** - 代码审查完成、PR 创建成功等
+4. **错误警报** - 构建失败、测试未通过等异常情况
+
+### 发送通知方法
+使用 Bash 工具调用 bark.sh 脚本：
+
+\```bash
+# 基础通知
+bash ~/.claude/plugins/cache/claude-notification/unix/1.2.1/skills/notification-config/scripts/bark.sh -u "<user's bark url>" -t "Claude Code" -m "任务完成"
+
+# 紧急通知（持续响铃30秒）
+bash ~/.claude/plugins/cache/claude-notification/unix/1.2.1/skills/notification-config/scripts/bark.sh -u "<user's bark url>" -t "Claude Code" -m "需要确认" -c
+
+# 分组通知
+bash ~/.claude/plugins/cache/claude-notification/unix/1.2.1/skills/notification-config/scripts/bark.sh -u "<user's bark url>" -t "构建完成" -m "项目构建成功" -g "build"
+\```
+
+### 使用原则
+* 在用户明确要求通知时发送
+* 完成重要任务后主动发送（如代码审查、PR创建、长时间构建等）
+* 紧急情况使用 `-c` 参数
+* 相关任务使用 `-g` 参数分组
+```
+
 4. Remind user: **"配置完成后需要重启 Claude Code 才能生效"**
 
 ### Send Notification Proactively
@@ -120,10 +153,7 @@ Send notifications proactively in these scenarios:
 When user requests notification or after completing important tasks:
 
 1. Read `bark_url` from `.claude/claude-notification.local.md`
-2. If bark_url exists, use Bash tool to call bark.sh:
-   ```
-   bash ~/.claude/plugins/cache/claude-notification/unix/*/skills/notification-config/scripts/bark.sh -u <bark_url> -t "Claude Code" -m "Task completed"
-   ```
+2. If bark_url exists, use Bash tool to call bark.sh with the exact command format from CLAUDE.md
 3. Choose appropriate parameters based on scenario (use -c for urgent notifications)
 
 ## Platform Notes
