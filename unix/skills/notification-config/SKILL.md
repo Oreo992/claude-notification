@@ -104,11 +104,11 @@ Send notifications proactively in these scenarios:
 
 ### Configure Bark
 
-**IMPORTANT: Always follow ALL steps below when configuring Bark**
+**Always follow ALL steps below when configuring Bark**
 
 1. Ask user for Bark URL
 2. Use Write tool to create `.claude/claude-notification.local.md`
-3. **MUST ask user: "是否要将通知功能添加到项目的 CLAUDE.md 中？这样 AI 就能在完成重要任务时主动发送通知。"**
+3. **ask user: "是否要将通知功能添加到项目的 CLAUDE.md 中？这样 AI 就能在完成重要任务时主动发送通知。"**
    - Use AskUserQuestion tool with options: "是，添加到 CLAUDE.md" / "否，暂时不需要"
    - If yes: Create or append to `.claude/CLAUDE.md` with notification instructions
    - Include example bash command to read config and send notifications
