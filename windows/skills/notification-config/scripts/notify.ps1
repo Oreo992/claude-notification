@@ -9,6 +9,32 @@ if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT
     }
 }
 
+# 读取配置文件
+$configFile = Join-Path $Dir ".claude/claude-notification.local.md"
+$barkUrl = ""
+$barkOnly = $false
+$timeout = 3000
+
+if (Test-Path $configFile) {
+    $content = Get-Content $configFile -Raw
+    # 解析 YAML frontmatter
+    if ($content -match '(?s)^---\r?\n(.+?)\r?\n---') {
+        $frontmatter = $Matches[1]
+        # 提取 bark_url
+        if ($frontmatter -match 'bark_url:\s*[''"]?([^''"}\r\n]+)[''"]?') {
+            $barkUrl = $Matches[1].Trim()
+        }
+        # 提取 bark_only
+        if ($frontmatter -match 'bark_only:\s*(true|false)') {
+            $barkOnly = $Matches[1] -eq 'true'
+        }
+        # 提取 timeout
+        if ($frontmatter -match 'timeout:\s*(\d+)') {
+            $timeout = [int]$Matches[1]
+        }
+    }
+}
+
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -44,12 +70,27 @@ if ($foregroundPid -ne $myTerminalPid) {
         $Message = "$Message - $shortDir"
     }
 
-    Add-Type -AssemblyName System.Windows.Forms
-    $notify = New-Object System.Windows.Forms.NotifyIcon
-    $notify.Icon = [System.Drawing.SystemIcons]::Information
-    $notify.BalloonTipTitle = $Title
-    $notify.BalloonTipText = $Message
-    $notify.Visible = $true
-    $notify.ShowBalloonTip(3000)
-    $notify.Dispose()
+    # 发送 Bark 通知
+    if ($barkUrl) {
+        try {
+            $encodedTitle = [System.Uri]::EscapeDataString($Title)
+            $encodedMessage = [System.Uri]::EscapeDataString($Message)
+            $barkFullUrl = "$barkUrl/$encodedTitle/$encodedMessage"
+            Invoke-RestMethod -Uri $barkFullUrl -Method Get -TimeoutSec 5 | Out-Null
+        } catch {
+            # Bark 发送失败，静默忽略
+        }
+    }
+
+    # 发送系统通知（除非 bark_only 为 true）
+    if (-not $barkOnly) {
+        Add-Type -AssemblyName System.Windows.Forms
+        $notify = New-Object System.Windows.Forms.NotifyIcon
+        $notify.Icon = [System.Drawing.SystemIcons]::Information
+        $notify.BalloonTipTitle = $Title
+        $notify.BalloonTipText = $Message
+        $notify.Visible = $true
+        $notify.ShowBalloonTip($timeout)
+        $notify.Dispose()
+    }
 }

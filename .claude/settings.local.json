@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(git -C:*)",
-      "Bash(git -C \"C:\\\\Users\\\\Administrator\\\\claude-notification\" status)"
+      "Bash(git -C \"C:\\\\Users\\\\Administrator\\\\claude-notification\" status)",
+      "Bash(del \"C:\\\\Users\\\\Administrator\\\\claude-notification\\\\nul\")",
+      "Bash(curl:*)"
     ]
   }
 }
