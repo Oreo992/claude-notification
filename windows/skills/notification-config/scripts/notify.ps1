@@ -12,6 +12,7 @@ if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT
 $configFile = Join-Path $Dir ".claude/claude-notification.local.md"
 $barkUrl = ""
 $barkOnly = $false
+$timeout = 3000
 $alwaysNotify = $false
 
 if (Test-Path $configFile) {
@@ -24,6 +25,9 @@ if (Test-Path $configFile) {
         if ($frontmatter -match 'bark_only:\s*(true|false)') {
             $barkOnly = $Matches[1] -eq 'true'
         }
+        if ($frontmatter -match 'timeout:\s*(\d+)') {
+            $timeout = [int]$Matches[1]
+        }
         if ($frontmatter -match 'always_notify:\s*(true|false)') {
             $alwaysNotify = $Matches[1] -eq 'true'
         }
@@ -31,7 +35,8 @@ if (Test-Path $configFile) {
 }
 
 # 前台检测
-Add-Type @"
+if (-not ([System.Management.Automation.PSTypeName]'Win32').Type) {
+    Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 public class Win32 {
@@ -39,6 +44,7 @@ public class Win32 {
     [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint processId);
 }
 "@
+}
 
 $foregroundWindow = [Win32]::GetForegroundWindow()
 $foregroundPid = 0
@@ -121,8 +127,8 @@ if ($shouldNotify) {
                 $notify.BalloonTipTitle = $Title
                 $notify.BalloonTipText = $Message
                 $notify.Visible = $true
-                $notify.ShowBalloonTip(3000)
-                Start-Sleep -Milliseconds 3000
+                $notify.ShowBalloonTip($timeout)
+                # 不使用 Start-Sleep，让通知异步显示
                 $notify.Dispose()
             } catch {
                 # 完全失败，静默忽略
