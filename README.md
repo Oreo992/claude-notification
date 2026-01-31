@@ -33,7 +33,18 @@
 - "我想让通知显示时间长一点"
 - "只用 Bark 推送，不要系统通知"
 
-AI 会自动创建配置文件 `.claude/claude-notification.local.md`。
+AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询问是否要在项目的 `CLAUDE.md` 中添加通知功能，让 AI 能够在完成任务后主动发送通知。
+
+### 让 AI 主动发送通知
+
+配置完成后，AI 可以在以下场景主动发送通知：
+
+- 用户明确要求："完成后通知我"、"用 bark 通知我"
+- 长时间任务完成：构建、测试、部署等
+- 重要里程碑：PR 创建、代码审查完成
+- 需要关注的错误：构建失败、测试不通过
+
+详细配置指南请查看 [NOTIFICATION_SETUP.md](./NOTIFICATION_SETUP.md)。
 
 ### 手动配置
 

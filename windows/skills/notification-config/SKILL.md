@@ -106,7 +106,38 @@ Send notifications proactively in these scenarios:
 
 1. Ask user for Bark URL
 2. Use Write tool to create `.claude/claude-notification.local.md`
-3. Remind user: **Restart Claude Code after configuration changes**
+3. **Ask user if they want to add notification capability to project's CLAUDE.md**
+   - If yes, add the following to `.claude/CLAUDE.md`:
+
+```markdown
+## Notification Feature
+
+Send notifications when completing important tasks.
+
+### Send Notification (Windows)
+```powershell
+$configFile = ".claude/claude-notification.local.md"
+if (Test-Path $configFile) {
+    $content = Get-Content $configFile -Raw
+    if ($content -match '(?s)^---\r?\n(.+?)\r?\n---') {
+        if ($Matches[1] -match 'bark_url:\s*[''"]?([^''"}\r\n]+)[''"]?') {
+            $barkUrl = $Matches[1].Trim()
+            if ($barkUrl) {
+                powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.claude\plugins\cache\claude-notification\windows\*\skills\notification-config\scripts\bark.ps1" -Url $barkUrl -Title "Claude Code" -Message "Task completed: [describe task]"
+            }
+        }
+    }
+}
+```
+
+### When to Notify
+- User explicitly requests: "notify me when done"
+- Long-running tasks (>30s): builds, tests, deployments
+- Important milestones: PR created, review completed
+- Errors requiring attention: build failures, test failures
+```
+
+4. Remind user: **Restart Claude Code after configuration changes**
 
 ### Send Notification Proactively
 
