@@ -4,7 +4,6 @@ param([string]$Title = "Claude Code", [string]$Message = "通知", [string]$Dir 
 if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT_DIR') {
     $Dir = $env:CLAUDE_PROJECT_DIR
     if (-not $Dir) {
-        # 如果环境变量也没有，使用当前工作目录
         $Dir = Get-Location
     }
 }
@@ -13,33 +12,25 @@ if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT
 $configFile = Join-Path $Dir ".claude/claude-notification.local.md"
 $barkUrl = ""
 $barkOnly = $false
-$timeout = 3000
 $alwaysNotify = $false
 
 if (Test-Path $configFile) {
     $content = Get-Content $configFile -Raw
-    # 解析 YAML frontmatter
     if ($content -match '(?s)^---\r?\n(.+?)\r?\n---') {
         $frontmatter = $Matches[1]
-        # 提取 bark_url
         if ($frontmatter -match 'bark_url:\s*[''"]?([^''"}\r\n]+)[''"]?') {
             $barkUrl = $Matches[1].Trim()
         }
-        # 提取 bark_only
         if ($frontmatter -match 'bark_only:\s*(true|false)') {
             $barkOnly = $Matches[1] -eq 'true'
         }
-        # 提取 timeout
-        if ($frontmatter -match 'timeout:\s*(\d+)') {
-            $timeout = [int]$Matches[1]
-        }
-        # 提取 always_notify
         if ($frontmatter -match 'always_notify:\s*(true|false)') {
             $alwaysNotify = $Matches[1] -eq 'true'
         }
     }
 }
 
+# 前台检测
 Add-Type @"
 using System;
 using System.Runtime.InteropServices;
@@ -53,7 +44,6 @@ $foregroundWindow = [Win32]::GetForegroundWindow()
 $foregroundPid = 0
 [Win32]::GetWindowThreadProcessId($foregroundWindow, [ref]$foregroundPid) | Out-Null
 
-# 向上遍历进程树，找到有窗口的祖先进程（终端窗口）
 $currentPid = $PID
 $myTerminalPid = $null
 for ($i = 0; $i -lt 20; $i++) {
@@ -67,7 +57,6 @@ for ($i = 0; $i -lt 20; $i++) {
     $currentPid = $proc.ParentProcessId
 }
 
-# 检查是否需要发送通知（前台检测或 always_notify）
 $shouldNotify = $alwaysNotify -or ($foregroundPid -ne $myTerminalPid)
 
 if ($shouldNotify) {
@@ -89,15 +78,55 @@ if ($shouldNotify) {
         }
     }
 
-    # 发送系统通知（除非 bark_only 为 true）
+    # 发送 Windows Toast 通知（除非 bark_only 为 true）
     if (-not $barkOnly) {
-        Add-Type -AssemblyName System.Windows.Forms
-        $notify = New-Object System.Windows.Forms.NotifyIcon
-        $notify.Icon = [System.Drawing.SystemIcons]::Information
-        $notify.BalloonTipTitle = $Title
-        $notify.BalloonTipText = $Message
-        $notify.Visible = $true
-        $notify.ShowBalloonTip($timeout)
-        $notify.Dispose()
+        try {
+            # 加载 Windows Runtime 组件
+            [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+            [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
+
+            # 应用标识符（使用 PowerShell 的 AppUserModelId）
+            $AppId = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
+
+            # 创建 Toast XML 模板
+            $ToastXml = @"
+<toast>
+    <visual>
+        <binding template="ToastGeneric">
+            <text>$([System.Security.SecurityElement]::Escape($Title))</text>
+            <text>$([System.Security.SecurityElement]::Escape($Message))</text>
+        </binding>
+    </visual>
+    <audio silent="true"/>
+</toast>
+"@
+
+            # 加载 XML
+            $XmlDoc = New-Object Windows.Data.Xml.Dom.XmlDocument
+            $XmlDoc.LoadXml($ToastXml)
+
+            # 创建并显示通知
+            $Toast = [Windows.UI.Notifications.ToastNotification]::new($XmlDoc)
+            $Toast.Tag = "ClaudeCode"
+            $Toast.Group = "ClaudeCode"
+
+            $Notifier = [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier($AppId)
+            $Notifier.Show($Toast)
+        } catch {
+            # Toast 通知失败，回退到 BalloonTip
+            try {
+                Add-Type -AssemblyName System.Windows.Forms
+                $notify = New-Object System.Windows.Forms.NotifyIcon
+                $notify.Icon = [System.Drawing.SystemIcons]::Information
+                $notify.BalloonTipTitle = $Title
+                $notify.BalloonTipText = $Message
+                $notify.Visible = $true
+                $notify.ShowBalloonTip(3000)
+                Start-Sleep -Milliseconds 3000
+                $notify.Dispose()
+            } catch {
+                # 完全失败，静默忽略
+            }
+        }
     }
 }
