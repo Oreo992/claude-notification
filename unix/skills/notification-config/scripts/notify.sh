@@ -9,6 +9,7 @@ DIR="${3:-}"
 BARK_URL=""
 BARK_ONLY="false"
 TIMEOUT=3000
+ALWAYS_NOTIFY="false"
 
 # 读取配置文件
 CONFIG_FILE="$DIR/.claude/claude-notification.local.md"
@@ -30,6 +31,11 @@ if [[ -f "$CONFIG_FILE" ]]; then
         if [[ "$TIMEOUT_VAL" =~ ^[0-9]+$ ]]; then
             TIMEOUT=$TIMEOUT_VAL
         fi
+        # 提取 always_notify
+        ALWAYS_NOTIFY_VAL=$(echo "$FRONTMATTER" | grep '^always_notify:' | sed 's/always_notify: *//')
+        if [[ "$ALWAYS_NOTIFY_VAL" == "true" ]]; then
+            ALWAYS_NOTIFY="true"
+        fi
     fi
 fi
 
@@ -37,8 +43,11 @@ fi
 send_notification() {
     local should_notify=false
 
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
+    # 如果配置了 always_notify，直接发送通知
+    if [[ "$ALWAYS_NOTIFY" == "true" ]]; then
+        should_notify=true
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # macOS - 检测前台应用
         FRONT_APP=$(osascript -e 'tell application "System Events" to get name of first process whose frontmost is true' 2>/dev/null)
         TERMINALS="Terminal|iTerm|iTerm2|Alacritty|kitty|Warp|Hyper|Code|Cursor|VSCodium"
 

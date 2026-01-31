@@ -22,6 +22,7 @@ This plugin supports configuration and proactive notification sending.
 | `bark_url` | string | empty | Bark push URL, e.g., `https://api.day.app/your-key` |
 | `bark_only` | boolean | false | Set to true to use only Bark, skip system notifications |
 | `timeout` | number | 3000 | Notification display duration (ms), Linux only |
+| `always_notify` | boolean | false | Set to true to always notify, even when terminal is in foreground |
 
 ### Configuration Template
 
@@ -30,6 +31,7 @@ This plugin supports configuration and proactive notification sending.
 bark_url: ""
 bark_only: false
 timeout: 3000
+always_notify: false
 ---
 ```
 

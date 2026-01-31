@@ -14,6 +14,7 @@ $configFile = Join-Path $Dir ".claude/claude-notification.local.md"
 $barkUrl = ""
 $barkOnly = $false
 $timeout = 3000
+$alwaysNotify = $false
 
 if (Test-Path $configFile) {
     $content = Get-Content $configFile -Raw
@@ -31,6 +32,10 @@ if (Test-Path $configFile) {
         # 提取 timeout
         if ($frontmatter -match 'timeout:\s*(\d+)') {
             $timeout = [int]$Matches[1]
+        }
+        # 提取 always_notify
+        if ($frontmatter -match 'always_notify:\s*(true|false)') {
+            $alwaysNotify = $Matches[1] -eq 'true'
         }
     }
 }
@@ -62,8 +67,10 @@ for ($i = 0; $i -lt 20; $i++) {
     $currentPid = $proc.ParentProcessId
 }
 
-# 只有当前台窗口不是我们的终端窗口时才发通知
-if ($foregroundPid -ne $myTerminalPid) {
+# 检查是否需要发送通知（前台检测或 always_notify）
+$shouldNotify = $alwaysNotify -or ($foregroundPid -ne $myTerminalPid)
+
+if ($shouldNotify) {
     if ($Dir) {
         $parts = $Dir -split '[/\\]' | Where-Object { $_ }
         $shortDir = ($parts | Select-Object -Last 2) -join '/'

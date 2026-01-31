@@ -44,6 +44,7 @@ AI 会自动创建配置文件 `.claude/claude-notification.local.md`。
 bark_url: "https://api.day.app/your-key"
 bark_only: false
 timeout: 3000
+always_notify: false
 ---
 ```
 
@@ -54,6 +55,7 @@ timeout: 3000
 | `bark_url` | string | 空 | Bark 推送地址 |
 | `bark_only` | boolean | false | 设为 true 则只使用 Bark，不显示系统通知 |
 | `timeout` | number | 3000 | 通知显示时长(毫秒)，Windows/Linux 有效 |
+| `always_notify` | boolean | false | 设为 true 则始终通知，即使终端在前台 |
 
 ## Bark 推送
 
