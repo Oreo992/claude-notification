@@ -2,7 +2,7 @@
 name: notification-config
 description: |
   This skill should be used when the user asks to "configure notifications", "set up Bark",
-  "configure Bark push", "change notification duration", "make notifications persistent",
+  "configure Bark push", "make notifications persistent", "always notify",
   or mentions "Bark", "notification settings", "push notifications".
   Also use when AI needs to proactively send notifications after completing important tasks.
 ---

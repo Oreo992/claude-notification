@@ -2,7 +2,7 @@
 name: notification-config
 description: |
   This skill should be used when the user asks to "configure notifications", "set up Bark",
-  "configure Bark push", "change notification duration", "make notifications persistent",
+  "configure Bark push", "make notifications persistent", "always notify",
   or mentions "Bark", "notification settings", "push notifications".
   Also use when AI needs to proactively send notifications after completing important tasks.
 ---
@@ -21,7 +21,6 @@ This plugin supports configuration and proactive notification sending.
 |--------|------|---------|-------------|
 | `bark_url` | string | empty | Bark push URL, e.g., `https://api.day.app/your-key` |
 | `bark_only` | boolean | false | Set to true to use only Bark, skip system notifications |
-| `timeout` | number | 3000 | Notification display duration (ms), Linux only |
 | `always_notify` | boolean | false | Set to true to always notify, even when terminal is in foreground |
 
 ### Configuration Template
@@ -30,7 +29,6 @@ This plugin supports configuration and proactive notification sending.
 ---
 bark_url: ""
 bark_only: false
-timeout: 3000
 always_notify: false
 ---
 ```
@@ -180,5 +178,5 @@ When user requests notification or after completing important tasks:
 
 ## Platform Notes
 
-- **macOS**: Notification duration controlled by system, `timeout` config has no effect
-- **Linux**: `timeout` config works (requires notify-send support)
+- **macOS**: Uses osascript for native notifications
+- **Linux**: Uses notify-send (requires libnotify)

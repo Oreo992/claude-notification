@@ -49,8 +49,8 @@
 
 后续你也可以使用此Skills，对通知配置进行更改，如：
 - "帮我配置 Bark 通知"
-- "我想让通知显示时间长一点"
 - "只用 Bark 推送，不要系统通知"
+- "我想终端在前台时也收到通知"
 
 示例:
 
@@ -93,7 +93,6 @@ AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询�
 ---
 bark_url: "https://api.day.app/your-key"
 bark_only: false
-timeout: 3000
 always_notify: false
 ---
 ```
@@ -104,7 +103,6 @@ always_notify: false
 |--------|------|--------|------|
 | `bark_url` | string | 空 | Bark 推送地址 |
 | `bark_only` | boolean | false | 设为 true 则只使用 Bark，不显示系统通知 |
-| `timeout` | number | 3000 | 通知显示时长(毫秒)，Windows/Linux 有效 |
 | `always_notify` | boolean | false | 设为 true 则始终通知，即使终端在前台 |
 
 ## Bark 推送
@@ -260,21 +258,48 @@ MIT
 
 ## 更新日志
 
-### v1.2.4 (2026-01-31)
-- ✨ Windows 升级到 Toast 通知 API，支持持久化到通知中心
-- ✨ 新增 `always_notify` 配置，支持前台通知
-- 🐛 修复 Unix 脚本缺少可执行权限的问题
-- 📝 说明 macOS/Linux 原生支持持久化通知
+### v1.2.x (2026-02-02) - 稳定性与体验优化
 
-### v1.1.0 (2026-01-31)
+> 从 v1.0 到 v1.2，插件从「被动通知」进化为「AI 主动推送」，让你真正解放双手。
+
+#### 核心变化
+
+| 痛点 | v1.0 | v1.2 |
+|------|------|------|
+| 只能等通知 | Hook 触发的被动通知 | AI 可主动推送，完成任务自动提醒 |
+| 通知转瞬即逝 | Windows BalloonTip 几秒消失 | Toast API + Bark 持久保留 |
+| 手机收不到 | 仅桌面通知 | Bark 推送到 iOS，随时随地收通知 |
+| 配置繁琐 | 无配置，无法自定义 | `/notification-config` 一键配置 |
+| 终端前台也弹 | 无法区分前后台 | 智能检测，后台才通知 |
+
+#### 详细更新
+
+**v1.2.6** - 路径动态化
+- 🔧 SKILL.md 使用 `{{PLUGIN_PATH}}` 占位符，版本更新无需手动改路径
+
+**v1.2.5** - 移除无效配置
+- 🗑️ 移除 `timeout` 配置项（Windows Toast 不支持自定义时长）
+- 🐛 修复 PowerShell 脚本 UTF-8 BOM 编码问题，解决中文系统解析失败
+
+**v1.2.4** - 通知持久化
+- ✨ Windows 升级到 Toast 通知 API，通知进入系统通知中心
+- ✨ 新增 `always_notify` 配置，支持前台也发通知
+- 🐛 修复 Unix 脚本可执行权限
+
+**v1.2.0 ~ v1.2.3** - AI 主动通知
+- ✨ 新增 Bark iOS 推送支持，通知持久保留
+- ✨ 新增 `/notification-config` Skills，对话式配置
+- ✨ AI 可在完成任务后主动调用 bark.ps1/bark.sh 发送通知
+- ✨ 支持紧急通知（`-Call`）、消息分组（`-Group`）、自定义铃声等
+- 🔧 配置流程优化，避免重复询问
+- 📝 自动生成 CLAUDE.md 通知配置模板
+
+### v1.1.0 (2026-01-31) - Bark 集成
 - ✨ 新增 Bark 推送支持
-- ✨ 新增配置文件支持
-- ✨ 新增 AI 主动通知能力
-- ✨ 新增完整的 Bark 参数支持（紧急通知、分组、铃声等）
+- ✨ 新增项目级配置文件 `.claude/claude-notification.local.md`
 - 🔧 优化插件结构，符合 Claude Code 规范
-- 📝 完善文档和使用示例
 
-### v1.0.0
-- 🎉 初始版本
-- ✅ Windows/macOS/Linux 支持
-- ✅ 权限请求和任务完成通知
+### v1.0.0 - 初始版本
+- 🎉 Windows/macOS/Linux 跨平台支持
+- ✅ Hook 自动触发：权限请求、任务完成
+- ✅ 智能前后台检测

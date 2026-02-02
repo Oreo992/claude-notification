@@ -8,7 +8,6 @@ DIR="${3:-}"
 # 默认配置
 BARK_URL=""
 BARK_ONLY="false"
-TIMEOUT=3000
 ALWAYS_NOTIFY="false"
 
 # 读取配置文件
@@ -25,11 +24,6 @@ if [[ -f "$CONFIG_FILE" ]]; then
         BARK_ONLY_VAL=$(echo "$FRONTMATTER" | grep '^bark_only:' | sed 's/bark_only: *//')
         if [[ "$BARK_ONLY_VAL" == "true" ]]; then
             BARK_ONLY="true"
-        fi
-        # 提取 timeout
-        TIMEOUT_VAL=$(echo "$FRONTMATTER" | grep '^timeout:' | sed 's/timeout: *//')
-        if [[ "$TIMEOUT_VAL" =~ ^[0-9]+$ ]]; then
-            TIMEOUT=$TIMEOUT_VAL
         fi
         # 提取 always_notify
         ALWAYS_NOTIFY_VAL=$(echo "$FRONTMATTER" | grep '^always_notify:' | sed 's/always_notify: *//')
@@ -80,8 +74,7 @@ send_notification() {
             else
                 # Linux
                 if command -v notify-send &> /dev/null; then
-                    # 转换毫秒到毫秒（notify-send 使用毫秒）
-                    notify-send "$TITLE" "$MESSAGE" -t "$TIMEOUT"
+                    notify-send "$TITLE" "$MESSAGE" -t 5000
                 fi
             fi
         fi
