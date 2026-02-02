@@ -92,6 +92,7 @@ AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询�
 ```markdown
 ---
 bark_url: "https://api.day.app/your-key"
+wechat_token: "your-wechat-token"
 bark_only: false
 always_notify: false
 ---
@@ -102,8 +103,36 @@ always_notify: false
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | `bark_url` | string | 空 | Bark 推送地址 |
+| `wechat_token` | string | 空 | 微信推送 Token（Server酱） |
 | `bark_only` | boolean | false | 设为 true 则只使用 Bark，不显示系统通知 |
 | `always_notify` | boolean | false | 设为 true 则始终通知，即使终端在前台 |
+
+## 微信推送
+
+[Server酱](https://xtuis.cn/) 是一个微信推送服务，可以将通知推送到微信，方便在手机上接收。
+
+### 配置微信推送
+
+1. 访问 [https://xtuis.cn/](https://xtuis.cn/)
+2. 微信扫码关注公众号
+3. 获取你的专属 Token
+4. 告诉 AI："帮我配置微信通知"，提供你的 Token
+
+配置完成后，Token 会保存在 `.claude/claude-notification.local.md` 文件中，AI 可以直接调用发送通知。
+
+### AI 主动发送通知
+
+AI 可以在完成重要任务时主动发送微信通知。插件提供了完整的微信推送脚本，支持：
+
+- 标题和内容自定义
+- 详细描述信息
+- 持久保留在微信中
+
+**示例场景：**
+- 长时间构建完成
+- 测试运行结束
+- 代码审查完成
+- 重要任务完成提醒
 
 ## Bark 推送
 
@@ -144,6 +173,7 @@ AI 可以在完成重要任务时主动发送通知。插件提供了完整的 B
   - macOS: 原生支持，进入 macOS 通知中心
   - Linux: 大部分桌面环境支持（GNOME、KDE 等）
 - **Bark 支持** - 可选配置 iOS Bark 推送，支持持久通知
+- **微信推送** - 可选配置微信推送（Server酱），通知直达微信
 - **AI 集成** - AI 可以主动调用通知脚本发送提醒
 - **丰富参数** - 支持紧急通知、消息分组、自定义铃声等
 - **灵活配置** - 支持前台通知、仅 Bark 推送等多种模式
@@ -173,7 +203,8 @@ windows/
 │       ├── SKILL.md              # AI 技能定义
 │       └── scripts/
 │           ├── notify.ps1        # 系统通知脚本
-│           └── bark.ps1          # Bark 推送脚本
+│           ├── bark.ps1          # Bark 推送脚本
+│           └── wechat.ps1        # 微信推送脚本
 └── hooks/
     └── hooks.json                # Hook 配置
 
@@ -185,7 +216,8 @@ unix/
 │       ├── SKILL.md
 │       └── scripts/
 │           ├── notify.sh
-│           └── bark.sh
+│           ├── bark.sh
+│           └── wechat.sh
 └── hooks/
     └── hooks.json
 ```
