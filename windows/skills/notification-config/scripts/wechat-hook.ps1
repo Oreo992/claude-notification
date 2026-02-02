@@ -30,6 +30,19 @@ $projectDir = $env:CLAUDE_PROJECT_DIR
 if (-not $projectDir) {
     $projectDir = Get-Location
 }
+
+# 调试日志（可选，用于排查问题）
+$debugLog = Join-Path $projectDir ".claude\wechat-hook-debug.log"
+try {
+    $logDir = Split-Path $debugLog -Parent
+    if (-not (Test-Path $logDir)) {
+        New-Item -ItemType Directory -Path $logDir -Force | Out-Null
+    }
+    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Title: $Title, Message: $Message, ProjectDir: $projectDir" | Out-File -FilePath $debugLog -Append -Encoding UTF8
+} catch {
+    # 忽略日志错误
+}
+
 $configPath = Join-Path $projectDir ".claude\claude-notification.local.md"
 
 if (-not (Test-Path $configPath)) {
@@ -39,31 +52,40 @@ if (-not (Test-Path $configPath)) {
 # 读取配置文件
 try {
     $content = Get-Content $configPath -Raw -Encoding UTF8
+    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - 读取配置成功" | Out-File -FilePath $debugLog -Append -Encoding UTF8
 
     # 检查是否启用 hook
     $hookEnabled = $true
     if ($content -match 'wechat_hook_enabled:\s*(false|no|0)') {
+        "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Hook 已禁用" | Out-File -FilePath $debugLog -Append -Encoding UTF8
         exit 0  # Hook 已禁用，静默退出
     }
 
     # 提取 wechat_token
     if ($content -match 'wechat_token:\s*["'']?([^"''\r\n]+)["'']?') {
         $token = $matches[1].Trim()
+        "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Token: $token" | Out-File -FilePath $debugLog -Append -Encoding UTF8
 
         if ([string]::IsNullOrWhiteSpace($token)) {
+            "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - Token 为空" | Out-File -FilePath $debugLog -Append -Encoding UTF8
             exit 0  # Token 为空，静默退出
         }
 
         # 调用微信推送脚本
         $scriptPath = Join-Path $PSScriptRoot "wechat.ps1"
+        "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - 调用 wechat.ps1: $scriptPath" | Out-File -FilePath $debugLog -Append -Encoding UTF8
 
         if ($Message) {
-            & $scriptPath -Token $token -Text $Title -Desp $Message
+            & $scriptPath -Token $token -Text $Title -Desp $Message 2>&1 | Out-File -FilePath $debugLog -Append -Encoding UTF8
         } else {
-            & $scriptPath -Token $token -Text $Title
+            & $scriptPath -Token $token -Text $Title 2>&1 | Out-File -FilePath $debugLog -Append -Encoding UTF8
         }
+        "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - 推送完成" | Out-File -FilePath $debugLog -Append -Encoding UTF8
+    } else {
+        "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - 未找到 Token" | Out-File -FilePath $debugLog -Append -Encoding UTF8
     }
 } catch {
-    # 发生错误，静默退出
+    # 发生错误，记录日志
+    "$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') - 错误: $_" | Out-File -FilePath $debugLog -Append -Encoding UTF8
     exit 0
 }
