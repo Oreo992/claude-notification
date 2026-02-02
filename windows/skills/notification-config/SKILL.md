@@ -20,7 +20,7 @@ This plugin supports configuration and proactive notification sending.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `bark_url` | string | empty | Bark push URL, e.g., `https://api.day.app/your-key` |
-| `wechat_token` | string | empty | WeChat (Server酱) Token, get from https://xtuis.cn/ |
+| `wechat_token` | string | empty | WeChat Token, get from https://xtuis.cn/ |
 | `bark_only` | boolean | false | Set to true to use only Bark, skip system notifications |
 | `always_notify` | boolean | false | Set to true to always notify, even when terminal is in foreground |
 
@@ -45,7 +45,7 @@ Scripts are located in `scripts/` directory of this skill:
 
 - **`scripts/notify.ps1`** - System notification script
 - **`scripts/bark.ps1`** - Bark push script with full parameters
-- **`scripts/wechat.ps1`** - WeChat (Server酱) push script
+- **`scripts/wechat.ps1`** - WeChat push script
 
 ### System Notification
 
