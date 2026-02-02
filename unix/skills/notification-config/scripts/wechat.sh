@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# 微信推送通知脚本（Server酱）
+# 微信推送通知脚本
 # 通过 https://xtuis.cn/ 向微信发送推送通知
 
 show_help() {
     cat << EOF
-微信推送通知脚本（Server酱）
+微信推送通知脚本
 
 用法:
     wechat.sh -t <token> -x <标题> [-d <内容>]
 
 必需参数:
-    -t, --token     Server酱 Token，从 https://xtuis.cn/ 获取
+    -t, --token     Token，从 https://xtuis.cn/ 获取
     -x, --text      通知标题
 
 可选参数:

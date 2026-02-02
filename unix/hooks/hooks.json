@@ -9,6 +9,11 @@
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/skills/notification-config/scripts/notify.sh\" \"Claude Code\" \"需要权限确认\" \"${CLAUDE_PROJECT_DIR}\"",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/skills/notification-config/scripts/wechat-hook.sh\" \"Claude Code\" \"需要权限确认\"",
+            "timeout": 10
           }
         ]
       }
@@ -19,6 +24,11 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/skills/notification-config/scripts/notify.sh\" \"Claude Code\" \"任务已完成\" \"${CLAUDE_PROJECT_DIR}\"",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/skills/notification-config/scripts/wechat-hook.sh\" \"Claude Code\" \"任务已完成\"",
             "timeout": 10
           }
         ]

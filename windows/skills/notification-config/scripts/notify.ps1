@@ -11,7 +11,7 @@ if (-not $Dir -or $Dir -eq '${CLAUDE_PROJECT_DIR}' -or $Dir -eq '$CLAUDE_PROJECT
 # 读取配置文件
 $configFile = Join-Path $Dir ".claude/claude-notification.local.md"
 $barkUrl = ""
-$barkOnly = $false
+$systemNotificationEnabled = $true
 $alwaysNotify = $false
 
 if (Test-Path $configFile) {
@@ -21,8 +21,8 @@ if (Test-Path $configFile) {
         if ($frontmatter -match 'bark_url:\s*[''"]?([^''"}\r\n]+)[''"]?') {
             $barkUrl = $Matches[1].Trim()
         }
-        if ($frontmatter -match 'bark_only:\s*(true|false)') {
-            $barkOnly = $Matches[1] -eq 'true'
+        if ($frontmatter -match 'system_notification_enabled:\s*(true|false)') {
+            $systemNotificationEnabled = $Matches[1] -eq 'true'
         }
         if ($frontmatter -match 'always_notify:\s*(true|false)') {
             $alwaysNotify = $Matches[1] -eq 'true'
@@ -92,8 +92,8 @@ if ($shouldNotify) {
         }
     }
 
-    # 发送 Windows Toast 通知（除非 bark_only 为 true）
-    if (-not $barkOnly) {
+    # 发送 Windows Toast 通知（除非 system_notification_enabled 为 false）
+    if ($systemNotificationEnabled) {
         try {
             # 加载 Windows Runtime 组件
             [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null

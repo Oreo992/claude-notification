@@ -21,7 +21,9 @@ This plugin supports configuration and proactive notification sending.
 |--------|------|---------|-------------|
 | `bark_url` | string | empty | Bark push URL, e.g., `https://api.day.app/your-key` |
 | `wechat_token` | string | empty | WeChat Token, get from https://xtuis.cn/ |
-| `bark_only` | boolean | false | Set to true to use only Bark, skip system notifications |
+| `wechat_hook_enabled` | boolean | true | Enable WeChat hook auto-trigger |
+| `bark_hook_enabled` | boolean | true | Enable Bark hook auto-trigger |
+| `system_notification_enabled` | boolean | true | Enable system notifications |
 | `always_notify` | boolean | false | Set to true to always notify, even when terminal is in foreground |
 
 ### Configuration Template
@@ -30,7 +32,9 @@ This plugin supports configuration and proactive notification sending.
 ---
 bark_url: ""
 wechat_token: ""
-bark_only: false
+wechat_hook_enabled: true
+bark_hook_enabled: true
+system_notification_enabled: true
 always_notify: false
 ---
 ```
@@ -94,7 +98,7 @@ Use `scripts/bark.sh` for rich push notifications:
 
 ### WeChat Push
 
-Use `scripts/wechat.sh` for WeChat notifications via Server酱:
+Use `scripts/wechat.sh` for WeChat notifications :
 
 ```bash
 # View help
@@ -114,7 +118,7 @@ Use `scripts/wechat.sh` for WeChat notifications via Server酱:
 
 | Parameter | Description |
 |-----------|-------------|
-| `-t, --token` | Server酱 Token (required), get from https://xtuis.cn/ |
+| `-t, --token` | Server Token (required), get from https://xtuis.cn/ |
 | `-x, --text` | Notification title (required) |
 | `-d, --desp` | Notification content/description (optional) |
 
@@ -215,7 +219,7 @@ bash "{{PLUGIN_PATH}}/skills/notification-config/scripts/bark.sh" -u "<user's ba
    - Step 1: "访问 https://xtuis.cn/"
    - Step 2: "微信扫码关注公众号"
    - Step 3: "获取你的专属 Token 并提供给我"
-   - Ask: "请提供您的 Server酱 Token"
+   - Ask: "请提供您的专属Token"
 
 3. **Create or update configuration file:**
    - Use Write tool to create/update `.claude/claude-notification.local.md`

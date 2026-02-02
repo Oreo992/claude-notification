@@ -1,9 +1,14 @@
 # Claude Code Notification Plugin
 
-桌面通知插件，在以下场景发送系统通知（仅当终端在后台时触发）：
+桌面通知插件，在以下场景自动发送通知（仅当终端在后台时触发）：
 
 - **权限请求** - 需要用户确认权限时
 - **任务完成** - Claude 完成任务时
+
+支持多种通知方式：
+- **系统通知** - Windows/macOS/Linux 原生桌面通知
+- **Bark 推送** - iOS 推送服务（可选）
+- **微信推送** - 通过 Server酱 推送到微信（可选）
 
 ## 安装
 
@@ -93,7 +98,9 @@ AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询�
 ---
 bark_url: "https://api.day.app/your-key"
 wechat_token: "your-wechat-token"
-bark_only: false
+wechat_hook_enabled: true
+bark_hook_enabled: true
+system_notification_enabled: true
 always_notify: false
 ---
 ```
@@ -103,13 +110,15 @@ always_notify: false
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
 | `bark_url` | string | 空 | Bark 推送地址 |
-| `wechat_token` | string | 空 | 微信推送 Token（Server酱） |
-| `bark_only` | boolean | false | 设为 true 则只使用 Bark，不显示系统通知 |
+| `wechat_token` | string | 空 | 微信推送 Token |
+| `wechat_hook_enabled` | boolean | true | 是否启用微信 Hook 自动触发（需先配置 token） |
+| `bark_hook_enabled` | boolean | true | 是否启用 Bark Hook 自动触发（需先配置 url） |
+| `system_notification_enabled` | boolean | true | 是否启用系统通知 |
 | `always_notify` | boolean | false | 设为 true 则始终通知，即使终端在前台 |
 
 ## 微信推送
 
-[Server酱](https://xtuis.cn/) 是一个微信推送服务，可以将通知推送到微信，方便在手机上接收。
+(https://xtuis.cn/) 是一个微信推送服务，可以将通知推送到微信，方便在手机上接收。
 
 ### 配置微信推送
 
@@ -118,7 +127,17 @@ always_notify: false
 3. 获取你的专属 Token
 4. 告诉 AI："帮我配置微信通知"，提供你的 Token
 
-配置完成后，Token 会保存在 `.claude/claude-notification.local.md` 文件中，AI 可以直接调用发送通知。
+配置完成后，Token 会保存在 `.claude/claude-notification.local.md` 文件中：
+- **Hook 自动触发** - 权限请求和任务完成时自动发送微信通知
+- **AI 主动调用** - AI 可以在完成重要任务时主动发送通知
+
+### Hook 自动通知
+
+配置 Token 后，插件会在以下场景自动发送微信通知：
+- 权限请求时
+- 任务完成时
+
+无需额外配置，只要 Token 存在就会自动触发。
 
 ### AI 主动发送通知
 
@@ -173,7 +192,7 @@ AI 可以在完成重要任务时主动发送通知。插件提供了完整的 B
   - macOS: 原生支持，进入 macOS 通知中心
   - Linux: 大部分桌面环境支持（GNOME、KDE 等）
 - **Bark 支持** - 可选配置 iOS Bark 推送，支持持久通知
-- **微信推送** - 可选配置微信推送（Server酱），通知直达微信
+- **微信推送** - 可选配置微信推送，通知直达微信
 - **AI 集成** - AI 可以主动调用通知脚本发送提醒
 - **丰富参数** - 支持紧急通知、消息分组、自定义铃声等
 - **灵活配置** - 支持前台通知、仅 Bark 推送等多种模式
@@ -204,7 +223,8 @@ windows/
 │       └── scripts/
 │           ├── notify.ps1        # 系统通知脚本
 │           ├── bark.ps1          # Bark 推送脚本
-│           └── wechat.ps1        # 微信推送脚本
+│           ├── wechat.ps1        # 微信推送脚本
+│           └── wechat-hook.ps1   # 微信 Hook 包装脚本
 └── hooks/
     └── hooks.json                # Hook 配置
 
@@ -217,7 +237,8 @@ unix/
 │       └── scripts/
 │           ├── notify.sh
 │           ├── bark.sh
-│           └── wechat.sh
+│           ├── wechat.sh
+│           └── wechat-hook.sh
 └── hooks/
     └── hooks.json
 ```
@@ -307,6 +328,14 @@ MIT
 | 多终端难区分 | 无终端标识 | 显示终端名称，一目了然 |
 
 #### 详细更新
+
+**v1.3.0** - 微信推送支持
+- ✨ 新增微信推送支持，通知直达微信
+- ✨ 新增 Hook 自动触发功能，配置 Token 后自动发送微信通知
+- ✨ 新增配置开关：`wechat_hook_enabled`、`bark_hook_enabled`、`system_notification_enabled`
+- 🔧 统一配置项命名风格，使用 `_enabled` 后缀
+- 🔧 `bark_only` 重命名为 `system_notification_enabled`（向后兼容）
+- 📝 更新所有文档和 Skills 配置指引
 
 **v1.2.8** - 终端识别
 - ✨ 通知中显示终端名称（如 `[Windows PowerShell]`），方便多终端场景识别

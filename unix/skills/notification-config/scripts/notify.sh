@@ -7,7 +7,7 @@ DIR="${3:-}"
 
 # 默认配置
 BARK_URL=""
-BARK_ONLY="false"
+SYSTEM_NOTIFICATION_ENABLED="true"
 ALWAYS_NOTIFY="false"
 
 # 读取配置文件
@@ -20,10 +20,10 @@ if [[ -f "$CONFIG_FILE" ]]; then
     if [[ -n "$FRONTMATTER" ]]; then
         # 提取 bark_url
         BARK_URL=$(echo "$FRONTMATTER" | grep '^bark_url:' | sed 's/bark_url: *//' | sed 's/^"\(.*\)"$/\1/' | sed "s/^'\(.*\)'$/\1/")
-        # 提取 bark_only
-        BARK_ONLY_VAL=$(echo "$FRONTMATTER" | grep '^bark_only:' | sed 's/bark_only: *//')
-        if [[ "$BARK_ONLY_VAL" == "true" ]]; then
-            BARK_ONLY="true"
+        # 提取 system_notification_enabled
+        SYSTEM_NOTIFICATION_ENABLED_VAL=$(echo "$FRONTMATTER" | grep '^system_notification_enabled:' | sed 's/system_notification_enabled: *//')
+        if [[ "$SYSTEM_NOTIFICATION_ENABLED_VAL" == "false" ]]; then
+            SYSTEM_NOTIFICATION_ENABLED="false"
         fi
         # 提取 always_notify
         ALWAYS_NOTIFY_VAL=$(echo "$FRONTMATTER" | grep '^always_notify:' | sed 's/always_notify: *//')
@@ -85,8 +85,8 @@ send_notification() {
             curl -s -m 5 "$BARK_URL/$ENCODED_TITLE/$ENCODED_MESSAGE" >/dev/null 2>&1 || true
         fi
 
-        # 发送系统通知（除非 bark_only 为 true）
-        if [[ "$BARK_ONLY" != "true" ]]; then
+        # 发送系统通知（除非 system_notification_enabled 为 false）
+        if [[ "$SYSTEM_NOTIFICATION_ENABLED" == "true" ]]; then
             if [[ "$OSTYPE" == "darwin"* ]]; then
                 osascript -e "display notification \"$MESSAGE\" with title \"$TITLE\""
             else

@@ -3,10 +3,10 @@
     微信推送通知脚本
 
 .DESCRIPTION
-    通过 Server酱（xtuis.cn）向微信发送推送通知。
+    通过（xtuis.cn）向微信发送推送通知。
 
 .PARAMETER Token
-    Server酱 Token（必需），从 https://xtuis.cn/ 获取
+    Token（必需），从 https://xtuis.cn/ 获取
 
 .PARAMETER Text
     通知标题（必需）
@@ -44,13 +44,13 @@ param(
 # 显示帮助
 if ($Help -or (-not $Token -and -not $Text)) {
     Write-Host @"
-微信推送通知脚本（Server酱）
+微信推送通知脚本
 
 用法:
     wechat.ps1 -Token <token> -Text <标题> [-Desp <内容>]
 
 必需参数:
-    -Token      Server酱 Token，从 https://xtuis.cn/ 获取
+    -Token      Token，从 https://xtuis.cn/ 获取
     -Text       通知标题
 
 可选参数:
