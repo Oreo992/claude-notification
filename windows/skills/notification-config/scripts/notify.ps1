@@ -48,12 +48,19 @@ $foregroundPid = 0
 
 $currentPid = $PID
 $myTerminalPid = $null
+$terminalName = $null
 for ($i = 0; $i -lt 20; $i++) {
     $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$currentPid" -ErrorAction SilentlyContinue
     if (-not $proc -or -not $proc.ParentProcessId) { break }
     $parentProc = Get-Process -Id $proc.ParentProcessId -ErrorAction SilentlyContinue
     if ($parentProc -and $parentProc.MainWindowHandle -ne [IntPtr]::Zero) {
         $myTerminalPid = $parentProc.Id
+        # 获取终端名称（优先使用主窗口标题，否则使用进程名）
+        if ($parentProc.MainWindowTitle) {
+            $terminalName = $parentProc.MainWindowTitle
+        } else {
+            $terminalName = $parentProc.ProcessName
+        }
         break
     }
     $currentPid = $proc.ParentProcessId
@@ -66,6 +73,11 @@ if ($shouldNotify) {
         $parts = $Dir -split '[/\\]' | Where-Object { $_ }
         $shortDir = ($parts | Select-Object -Last 2) -join '/'
         $Message = "$Message - $shortDir"
+    }
+
+    # 添加终端名称
+    if ($terminalName) {
+        $Message = "$Message [$terminalName]"
     }
 
     # 发送 Bark 通知

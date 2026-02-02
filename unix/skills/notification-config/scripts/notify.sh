@@ -36,6 +36,7 @@ fi
 # 检测前台应用是否是终端
 send_notification() {
     local should_notify=false
+    local terminal_name=""
 
     # 如果配置了 always_notify，直接发送通知
     if [[ "$ALWAYS_NOTIFY" == "true" ]]; then
@@ -45,12 +46,24 @@ send_notification() {
         FRONT_APP=$(osascript -e 'tell application "System Events" to get name of first process whose frontmost is true' 2>/dev/null)
         TERMINALS="Terminal|iTerm|iTerm2|Alacritty|kitty|Warp|Hyper|Code|Cursor|VSCodium"
 
+        # 获取终端名称
+        terminal_name="$FRONT_APP"
+
         if [[ ! "$FRONT_APP" =~ ^($TERMINALS)$ ]]; then
             should_notify=true
         fi
     else
         # Linux - 始终发送通知
         should_notify=true
+        # 尝试获取终端名称
+        if [[ -n "$TERM_PROGRAM" ]]; then
+            terminal_name="$TERM_PROGRAM"
+        elif [[ -n "$TERMINAL_EMULATOR" ]]; then
+            terminal_name="$TERMINAL_EMULATOR"
+        else
+            # 从父进程获取
+            terminal_name=$(ps -o comm= -p $PPID 2>/dev/null || echo "Terminal")
+        fi
     fi
 
     if [[ "$should_notify" == "true" ]]; then
@@ -58,6 +71,11 @@ send_notification() {
         if [ -n "$DIR" ]; then
             SHORT_DIR=$(echo "$DIR" | rev | cut -d'/' -f1-2 | rev)
             MESSAGE="$MESSAGE - $SHORT_DIR"
+        fi
+
+        # 添加终端名称
+        if [ -n "$terminal_name" ]; then
+            MESSAGE="$MESSAGE [$terminal_name]"
         fi
 
         # 发送 Bark 通知
