@@ -49,21 +49,45 @@ $foregroundPid = 0
 $currentPid = $PID
 $myTerminalPid = $null
 $terminalName = $null
-for ($i = 0; $i -lt 20; $i++) {
-    $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$currentPid" -ErrorAction SilentlyContinue
-    if (-not $proc -or -not $proc.ParentProcessId) { break }
-    $parentProc = Get-Process -Id $proc.ParentProcessId -ErrorAction SilentlyContinue
-    if ($parentProc -and $parentProc.MainWindowHandle -ne [IntPtr]::Zero) {
-        $myTerminalPid = $parentProc.Id
-        # 获取终端名称（优先使用主窗口标题，否则使用进程名）
-        if ($parentProc.MainWindowTitle) {
-            $terminalName = $parentProc.MainWindowTitle
-        } else {
-            $terminalName = $parentProc.ProcessName
+
+# 首先尝试从当前 PowerShell 会话获取窗口标题
+try {
+    $hostTitle = $Host.UI.RawUI.WindowTitle
+    if ($hostTitle) {
+        # 排除包含完整路径的默认标题（如 "Administrator: C:\Windows\System32\..."）
+        # 排除只包含进程名的标题（如 "Windows PowerShell"）
+        $isDefaultTitle = $hostTitle -match '(^Administrator:\s*[A-Z]:\\|^[A-Z]:\\|Windows PowerShell$|pwsh$|cmd$)'
+
+        if (-not $isDefaultTitle) {
+            # 使用用户自定义的标题
+            $terminalName = $hostTitle
         }
-        break
     }
-    $currentPid = $proc.ParentProcessId
+} catch {
+    # 忽略错误
+}
+
+# 如果没有获取到有效的标题，向上查找父进程
+if (-not $terminalName) {
+    for ($i = 0; $i -lt 20; $i++) {
+        $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$currentPid" -ErrorAction SilentlyContinue
+        if (-not $proc -or -not $proc.ParentProcessId) { break }
+        $parentProc = Get-Process -Id $proc.ParentProcessId -ErrorAction SilentlyContinue
+        if ($parentProc -and $parentProc.MainWindowHandle -ne [IntPtr]::Zero) {
+            $myTerminalPid = $parentProc.Id
+            # 获取终端名称（优先使用主窗口标题，否则使用进程名）
+            # 排除 explorer 进程
+            if ($parentProc.ProcessName -ne 'explorer') {
+                if ($parentProc.MainWindowTitle) {
+                    $terminalName = $parentProc.MainWindowTitle
+                } else {
+                    $terminalName = $parentProc.ProcessName
+                }
+                break
+            }
+        }
+        $currentPid = $proc.ParentProcessId
+    }
 }
 
 $shouldNotify = $alwaysNotify -or ($foregroundPid -ne $myTerminalPid)
