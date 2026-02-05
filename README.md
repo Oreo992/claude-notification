@@ -58,11 +58,6 @@
 - "只用 Bark 推送，不要系统通知"
 - "我想终端在前台时也收到通知"
 
-示例:
-
-<img width="899" height="450" alt="image" src="https://github.com/user-attachments/assets/5040723f-e7ff-4417-9435-cad140e7991b" />
-
-
 AI 会自动创建配置文件 `.claude/claude-notification.local.md`，并询问是否要在项目的 `CLAUDE.md` 中添加通知功能，让 AI 能够在完成任务后主动发送通知。
 
 
